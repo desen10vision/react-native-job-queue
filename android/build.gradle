@@ -1,12 +1,12 @@
 buildscript {
     repositories {
         google()
-         mavenCentral()
+        mavenCentral()
     }
 
     dependencies {
-        //noinspection GradleDependency
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:8.1.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22"
     }
 }
 
@@ -28,8 +28,6 @@ spotless {
             include '**/*.xml', '**/*.xsd'
             exclude '**/build/**'
         }
-        // Use for example eclipseWtp('xml', '4.7.3a') to specify a specific version of Eclipse,
-        // available versions are: https://github.com/diffplug/spotless/tree/master/lib-extra/src/main/resources/com/diffplug/spotless/extra/eclipse_wtp_formatters
         eclipseWtp('xml')
     }
 }
@@ -43,6 +41,8 @@ def getExtOrIntegerDefault(name) {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
@@ -52,8 +52,18 @@ android {
         minSdkVersion getExtOrIntegerDefault('minSdkVersion')
         targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
     }
-    lintOptions{
+    
+    lintOptions {
         abortOnError false
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    
+    kotlinOptions {
+        jvmTarget = '11'
     }
 }
 
@@ -65,7 +75,12 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     api 'com.facebook.react:react-native:+'
-    implementation "androidx.room:room-runtime:2.6.1"
-    annotationProcessor "androidx.room:room-compiler:2.6.1"
-    implementation "androidx.room:room-ktx:2.6.1"
+    
+    // Room com versões compatíveis
+    implementation "androidx.room:room-runtime:2.5.2"
+    kapt "androidx.room:room-compiler:2.5.2"
+    implementation "androidx.room:room-ktx:2.5.2"
+    
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.22"
 }
